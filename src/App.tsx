@@ -14,7 +14,7 @@ function App() {
                     </ScrollArea>
                 </ResizablePanel>
                 <ResizableHandle/>
-                <ResizablePanel>
+                <ResizablePanel className="overflow-auto bg-gray-100 dark:bg-gray-900">
                     <ScrollArea className="max-h-full overflow-auto">
                         <Outlet/>
                     </ScrollArea>
