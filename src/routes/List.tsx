@@ -1,5 +1,3 @@
-import searchIcon from '@/assets/search.svg';
-
 import { Button } from '@/components/ui/button.tsx';
 import { Note } from '@/libs/models/note.models.ts';
 import { computeDateLabel, groupNotesByDate, NotesGroup } from '@/libs/utils/notes.utils.ts';
@@ -56,7 +54,7 @@ function List() {
 
     return (
         <main className="flex-1 p-4 overflow-y-auto">
-            <ListNav/>
+            <ListHeader/>
             {
                 sortedDates.map((timestamp) => (
                     <ListGroup key={timestamp} timestamp={timestamp} notes={notesByDate[timestamp]}/>
@@ -66,19 +64,10 @@ function List() {
     );
 }
 
-function ListNav() {
+function ListHeader() {
     return (
         <nav className="flex justify-between items-center mb-4">
             <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">All Notes</h1>
-            <div className="relative">
-                <input
-                    className="border rounded-md p-2 dark:bg-gray-800 dark:text-gray-100 text-sm"
-                    placeholder="Search notes..."
-                    type="text"
-                />
-                <img src={searchIcon} alt="search"
-                     className="h-5 w-5 absolute right-2 top-2 text-gray-500 dark:text-gray-400 cursor-pointer"/>
-            </div>
         </nav>
     );
 }

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Note } from '@/libs/models/note.models.ts';
 import { Button } from '@/components/ui/button.tsx';
 import { computeDateLabel, groupNotesByDate, NotesGroup } from '@/libs/utils/notes.utils.ts';
+import SearchNotes from '@/components/notes/SearchNotes.tsx';
 
 const baseUrl = '/';
 
@@ -36,6 +37,7 @@ function Sidebar() {
                         </Button>
                     </Link>
                 </div>
+                <SearchNotes className="my-2" />
                 {
                     sortedDates.map((timestamp) => (
                         <SidebarGroup key={timestamp} timestamp={timestamp} notes={notesByDate[timestamp]}/>
