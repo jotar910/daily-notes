@@ -1,14 +1,25 @@
-import reactLogo from './assets/react.svg';
 import './App.css';
-import { Button } from '@/components/ui/button.tsx';
+import { Outlet } from 'react-router-dom';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable.tsx';
+import Sidebar from '@/components/common/Sidebar.tsx';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 function App() {
     return (
-        <div className="container p-4">
-            <h1 className="h2 muted inline">Welcome to Tauri!</h1>
-            <img src={reactLogo} className="logo react inline ml-2 mb-2" alt="React logo" />
-            <Button variant="ghost" className="float-right">Click me!</Button>
-            <p className="p">This is a template for React + Tauri + TailwindCSS + shadcn/ui</p>
+        <div className="vh-full">
+            <ResizablePanelGroup direction="horizontal">
+                <ResizablePanel minSize={25} maxSize={50} defaultSize={30}>
+                    <ScrollArea className="max-h-full overflow-auto">
+                        <Sidebar/>
+                    </ScrollArea>
+                </ResizablePanel>
+                <ResizableHandle/>
+                <ResizablePanel>
+                    <ScrollArea className="max-h-full overflow-auto">
+                        <Outlet/>
+                    </ScrollArea>
+                </ResizablePanel>
+            </ResizablePanelGroup>
         </div>
     );
 }

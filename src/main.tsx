@@ -8,7 +8,8 @@ import {
 import { appWindow } from '@tauri-apps/api/window';
 
 import './styles.css';
-import App from './App';
+import App from '@/App';
+import List from '@/routes/List.tsx';
 
 // make the application open always on top of the other windows.
 await appWindow.setAlwaysOnTop(true);
@@ -17,6 +18,12 @@ const router = createBrowserRouter([
     {
         path: '/',
         element: <App/>,
+        children: [
+            {
+                path: '/',
+                element: <List />
+            }
+        ]
     },
 ]);
 
