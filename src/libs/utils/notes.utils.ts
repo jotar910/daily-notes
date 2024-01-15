@@ -16,7 +16,6 @@ export function groupNotesByDate(notes: Note[]): NotesGroup {
 
 export function computeDateLabel(timestamp: number): string {
     const today = startOfTheDay(new Date());
-    console.log(timestamp, today);
     if (timestamp >= today) {
         return 'Today';
     }

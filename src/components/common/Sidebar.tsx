@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Note } from '@/libs/models/note.models.ts';
 import { Button } from '@/components/ui/button.tsx';
 import { computeDateLabel, groupNotesByDate, NotesGroup } from '@/libs/utils/notes.utils.ts';
@@ -31,7 +31,7 @@ function Sidebar() {
             <div className="p-4">
                 <div className="flex justify-between items-center">
                     <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Notes</h2>
-                    <Link to={baseUrl + '/create'}>
+                    <Link to={baseUrl + 'create'}>
                         <Button className="text-sm text-blue-500 dark:text-blue-400 px-0" variant="link">
                             Create Note
                         </Button>
@@ -76,7 +76,8 @@ interface SidebarItemProps {
 }
 
 function SidebarItem({ note }: SidebarItemProps) {
-    const onEdit = () => location.assign(baseUrl + note.id + '/edit');
+    const navigate = useNavigate();
+    const onEdit = () => navigate(baseUrl + note.id + '/edit');
 
     return (
         <Link className="block" to={baseUrl + note.id}>

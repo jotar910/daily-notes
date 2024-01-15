@@ -1,8 +1,9 @@
 import { Button } from '@/components/ui/button.tsx';
 import { Note } from '@/libs/models/note.models.ts';
 import { computeDateLabel, groupNotesByDate, NotesGroup } from '@/libs/utils/notes.utils.ts';
+import { useNavigate } from 'react-router-dom';
 
-const baseUrl = './';
+const baseUrl = '';
 
 function List() {
     const notes: Note[] = [
@@ -98,7 +99,8 @@ interface ListItemProps {
 }
 
 function ListItem({ note }: ListItemProps) {
-    const onEdit = () => location.assign(baseUrl + note.id + '/edit');
+    const navigate = useNavigate();
+    const onEdit = () => navigate(baseUrl + note.id + '/edit');
 
     return (
         <div className="flex flex-col gap-2 mb-4">

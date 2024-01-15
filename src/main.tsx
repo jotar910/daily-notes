@@ -11,6 +11,9 @@ import './styles.css';
 import App from '@/App';
 import List from '@/routes/List.tsx';
 import View from '@/routes/View.tsx';
+import Edit from '@/routes/Edit.tsx';
+import Create from '@/routes/Create.tsx';
+import { Toaster } from '@/components/ui/toaster.tsx';
 
 // make the application open always on top of the other windows.
 await appWindow.setAlwaysOnTop(true);
@@ -25,6 +28,14 @@ const router = createBrowserRouter([
                 element: <List />
             },
             {
+                path: '/create',
+                element: <Create />
+            },
+            {
+                path: '/:id/edit',
+                element: <Edit />
+            },
+            {
                 path: '/:id',
                 element: <View />
             }
@@ -35,5 +46,6 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
         <RouterProvider router={router}/>
-    </React.StrictMode>,
+        <Toaster/>
+    </React.StrictMode>
 );

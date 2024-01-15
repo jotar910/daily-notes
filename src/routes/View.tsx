@@ -2,7 +2,7 @@ import { Note } from '@/libs/models/note.models';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button.tsx';
 
-const baseUrl = './';
+const baseUrl = '';
 
 function View() {
     const { id } = useParams();
@@ -40,7 +40,8 @@ interface ViewDetailsProps {
 }
 
 function ViewDetails({ note }: ViewDetailsProps) {
-    const onEdit = () => location.assign(baseUrl + '/edit');
+    const navigate = useNavigate();
+    const onEdit = () => navigate(baseUrl + 'edit');
 
     return (
         <div className="mt-4">
