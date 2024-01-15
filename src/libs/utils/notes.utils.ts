@@ -3,7 +3,10 @@ import { Note } from '@/libs/models/note.models.ts';
 
 export type NotesGroup = { [key: number]: Note[] };
 
-export function groupNotesByDate(notes: Note[]): NotesGroup {
+export function groupNotesByDate(notes: Note[] | null): NotesGroup {
+    if (!notes) {
+        return {};
+    }
     return notes.reduce((groups, note) => {
         const date = startOfTheDay(note.modifiedTimestamp);
         if (!(date in groups)) {

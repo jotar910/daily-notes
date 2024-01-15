@@ -5,3 +5,10 @@ export interface Note {
     createdTimestamp: number;
     modifiedTimestamp: number;
 }
+
+export interface NewNote {
+    title: string;
+    description: string;
+}
+
+export type EditNote = { id: number } & NewNote;

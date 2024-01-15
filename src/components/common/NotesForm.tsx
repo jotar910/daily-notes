@@ -14,11 +14,12 @@ export type Inputs = {
 interface NotesFormProps {
     note: Note;
     loading: boolean;
+    routePrompt?: boolean;
     onSubmit: SubmitHandler<Inputs>;
     onCancel: () => void;
 }
 
-function NotesForm({ note, loading, onSubmit, onCancel }: NotesFormProps) {
+function NotesForm({ note, loading, routePrompt = true, onSubmit, onCancel }: NotesFormProps) {
     const {
         register,
         handleSubmit,
@@ -31,7 +32,11 @@ function NotesForm({ note, loading, onSubmit, onCancel }: NotesFormProps) {
     };
     const isTouched = Object.keys(touchedFields).length > 0;
 
-    const { blocking, setConfirmed } = useFormPrompt(isTouched);
+    const { blocking, unblock, setConfirmed } = useFormPrompt(isTouched && routePrompt);
+
+    useEffect(() => {
+        !routePrompt && unblock();
+    }, [routePrompt]);
 
     return (
         <>
@@ -87,7 +92,7 @@ function useFormPrompt(when: boolean) {
     const [blocking, setBlocking] = useState<boolean>(false);
     const [confirmed, setConfirmed] = useState<boolean>(false);
 
-    useBlocker(({ nextLocation }) => {
+    const blocker = useBlocker(({ nextLocation }) => {
         setNextLocation(nextLocation.pathname);
         if (!when || confirmed || blocking) {
             return false;
@@ -107,6 +112,9 @@ function useFormPrompt(when: boolean) {
 
     return {
         blocking,
+        unblock: () => {
+            blocker.state === 'blocked' && blocker.reset();
+        },
         setConfirmed: (confirm: boolean) => {
             setConfirmed(confirm);
             setBlocking(false);

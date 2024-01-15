@@ -1,55 +1,14 @@
-import { Button } from '@/components/ui/button.tsx';
-import { Note } from '@/libs/models/note.models.ts';
-import { computeDateLabel, groupNotesByDate, NotesGroup } from '@/libs/utils/notes.utils.ts';
-import { useNavigate } from 'react-router-dom';
+import {Button} from '@/components/ui/button.tsx';
+import {Note} from '@/libs/models/note.models.ts';
+import {computeDateLabel, groupNotesByDate, NotesGroup} from '@/libs/utils/notes.utils.ts';
+import {useNavigate} from 'react-router-dom';
+import {useContext} from "react";
+import {NotesStoreContext} from "@/libs/stores/notes.tsx";
 
 const baseUrl = '';
 
 function List() {
-    const notes: Note[] = [
-        {
-            id: 1,
-            title: 'Note 1',
-            description: 'This is a preview of the note content in markdown format',
-            createdTimestamp: 1705236761037,
-            modifiedTimestamp: 1705026761037
-        },
-        {
-            id: 2,
-            title: 'Note 2',
-            description: 'This is a preview of the note content in markdown format',
-            createdTimestamp: 1705236761037,
-            modifiedTimestamp: 1705236761038
-        },
-        {
-            id: 3,
-            title: 'Note 3',
-            description: 'This is a preview of the note content in markdown format',
-            createdTimestamp: 1705236761037,
-            modifiedTimestamp: 1705216761038
-        },
-        {
-            id: 4,
-            title: 'Note 1',
-            description: 'This is a preview of the note content in markdown format',
-            createdTimestamp: 1705236761037,
-            modifiedTimestamp: 1705026761037
-        },
-        {
-            id: 5,
-            title: 'Note 2',
-            description: 'This is a preview of the note content in markdown format',
-            createdTimestamp: 1705236761037,
-            modifiedTimestamp: 1705236761038
-        },
-        {
-            id: 6,
-            title: 'Note 3',
-            description: 'This is a preview of the note content in markdown format',
-            createdTimestamp: 1705236761037,
-            modifiedTimestamp: 1705216761038
-        }
-    ];
+    const { notes } = useContext(NotesStoreContext);
     const notesByDate: NotesGroup = groupNotesByDate(notes);
     const sortedDates = Object.keys(notesByDate).map(Number).sort((a, b) => b - a);
 

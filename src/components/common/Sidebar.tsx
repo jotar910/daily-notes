@@ -1,49 +1,49 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { Note } from '@/libs/models/note.models.ts';
-import { Button } from '@/components/ui/button.tsx';
-import { computeDateLabel, groupNotesByDate, NotesGroup } from '@/libs/utils/notes.utils.ts';
+import {Link, useNavigate} from 'react-router-dom';
+import {Note} from '@/libs/models/note.models.ts';
+import {Button} from '@/components/ui/button.tsx';
+import {computeDateLabel, groupNotesByDate, NotesGroup} from '@/libs/utils/notes.utils.ts';
 import SearchNotes from '@/components/notes/SearchNotes.tsx';
+import {useContext, useEffect} from "react";
+import {NotesServiceContext} from "@/libs/services/notes.tsx";
+import {NotesStoreContext, NotesStoreDispatchContext} from "@/libs/stores/notes.tsx";
+import {ScrollArea} from "@/components/ui/scroll-area.tsx";
 
 const baseUrl = '/';
 
 function Sidebar() {
-    const notes: Note[] = [
-        {
-            id: 1,
-            title: 'Note 1',
-            description: 'This is a preview of the note content in markdown format',
-            createdTimestamp: 1705236761037,
-            modifiedTimestamp: 1705026761037
-        },
-        {
-            id: 2,
-            title: 'Note 2',
-            description: 'This is a preview of the note content in markdown format',
-            createdTimestamp: 1705236761037,
-            modifiedTimestamp: 1705236761038
-        }
-    ];
+    const NotesService = useContext(NotesServiceContext);
+    const {notes} = useContext(NotesStoreContext);
+    const dispatch = useContext(NotesStoreDispatchContext);
+
     const notesByDate: NotesGroup = groupNotesByDate(notes);
     const sortedDates = Object.keys(notesByDate).map(Number).sort((a, b) => b - a);
 
+    useEffect(() => {
+        const fetch = async () => {
+            dispatch({type: 'loading'});
+            dispatch({type: 'loaded', notes: await NotesService.listNotes()});
+        };
+        fetch();
+    }, []);
+
     return (
-        <aside className="w-full bg-white dark:bg-gray-800 border-r dark:border-gray-700 overflow-y-auto">
-            <div className="p-4">
-                <div className="flex justify-between items-center">
-                    <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Notes</h2>
-                    <Link to={baseUrl + 'create'}>
-                        <Button className="text-sm text-blue-500 dark:text-blue-400 px-0" variant="link">
-                            Create Note
-                        </Button>
-                    </Link>
-                </div>
-                <SearchNotes className="my-2" />
+        <aside className="flex flex-col w-full max-h-full bg-white dark:bg-gray-800 border-r dark:border-gray-700">
+            <header className="flex justify-between items-center p-4 pb-0">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Notes</h2>
+                <Link to={baseUrl + 'create'}>
+                    <Button className="text-sm text-blue-500 dark:text-blue-400 px-0" variant="link">
+                        Create Note
+                    </Button>
+                </Link>
+            </header>
+            <SearchNotes className="mx-4 my-2"/>
+            <ScrollArea className="px-4 max-h-full overflow-auto">
                 {
                     sortedDates.map((timestamp) => (
                         <SidebarGroup key={timestamp} timestamp={timestamp} notes={notesByDate[timestamp]}/>
                     ))
                 }
-            </div>
+            </ScrollArea>
         </aside>
     );
 }
@@ -53,7 +53,7 @@ interface SidebarGroupProps {
     notes: Note[];
 }
 
-function SidebarGroup({ timestamp, notes }: SidebarGroupProps) {
+function SidebarGroup({timestamp, notes}: SidebarGroupProps) {
     const label = computeDateLabel(timestamp);
     const sortedNotes = [...notes].sort((a, b) => b.modifiedTimestamp - a.modifiedTimestamp);
 
@@ -75,7 +75,7 @@ interface SidebarItemProps {
     note: Note;
 }
 
-function SidebarItem({ note }: SidebarItemProps) {
+function SidebarItem({note}: SidebarItemProps) {
     const navigate = useNavigate();
     const onEdit = () => navigate(baseUrl + note.id + '/edit');
 
@@ -84,8 +84,9 @@ function SidebarItem({ note }: SidebarItemProps) {
             <div className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
                 <div className="flex justify-between items-center">
                     <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{note.title}</h4>
-                    <div onClick={(e) => e.preventDefault()}>
-                        <Button className="text-sm text-blue-500 dark:text-blue-400 mr-2 px-0" variant="link" onClick={onEdit}>
+                    <div className="flex-shrink-0 ml-auto" onClick={(e) => e.preventDefault()}>
+                        <Button className="text-sm text-blue-500 dark:text-blue-400 mr-2 px-0" variant="link"
+                                onClick={onEdit}>
                             Edit
                         </Button>
                         <Button className="text-sm text-red-500 dark:text-red-400 px-0" variant="link">
