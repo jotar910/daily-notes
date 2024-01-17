@@ -2,8 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {createBrowserRouter, RouterProvider,} from 'react-router-dom';
 
-import {appWindow} from '@tauri-apps/api/window';
-
 import './styles.css';
 import App from '@/App';
 import List from '@/routes/List.tsx';
@@ -13,9 +11,7 @@ import Create from '@/routes/Create.tsx';
 import {Toaster} from '@/components/ui/toaster.tsx';
 import {NotesServiceContext, NotesServiceInstance} from "@/libs/services/notes.tsx";
 import {NotesStoreProvider} from "@/libs/stores/notes.tsx";
-
-// make the application open always on top of the other windows.
-await appWindow.setAlwaysOnTop(true);
+import Settings from "@/routes/Settings.tsx";
 
 const router = createBrowserRouter([
     {
@@ -40,6 +36,10 @@ const router = createBrowserRouter([
             }
         ]
     },
+    {
+        path: '/settings',
+        element: <Settings/>
+    }
 ]);
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

@@ -4,6 +4,7 @@ import {computeDateLabel, groupNotesByDate, NotesGroup} from '@/libs/utils/notes
 import {useNavigate} from 'react-router-dom';
 import {useContext} from "react";
 import {NotesStoreContext} from "@/libs/stores/notes.tsx";
+import {invoke} from "@tauri-apps/api";
 
 const baseUrl = '';
 
@@ -25,9 +26,14 @@ function List() {
 }
 
 function ListHeader() {
+    const onSettingsClick = async () => {
+        await invoke('open_settings');
+    };
+
     return (
         <nav className="flex justify-between items-center mb-4">
             <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">All Notes</h1>
+            <Button variant="ghost" onClick={onSettingsClick}>Set keymap</Button>
         </nav>
     );
 }
