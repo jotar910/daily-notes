@@ -1,7 +1,6 @@
 import {FormEvent, useEffect, useState} from "react";
 import {Store} from "tauri-plugin-store-api";
-import {WebviewWindow} from "@tauri-apps/api/window";
-import {invoke} from "@tauri-apps/api";
+import {invoke, window as tauriWindow} from "@tauri-apps/api";
 
 function Settings() {
     const settings = import.meta.env.VITE_SETTINGS_PATH;
@@ -17,10 +16,10 @@ function Settings() {
     }, [settings]);
 
     useEffect(() => {
-        const window = new WebviewWindow('settings');
+        const currentWindow = tauriWindow.getCurrent();
         const listen = async () => {
-            return window.listen('tauri://blur', () => {
-                window.close();
+            return currentWindow.listen('tauri://blur', () => {
+                currentWindow.close();
             });
         };
         const result = listen();

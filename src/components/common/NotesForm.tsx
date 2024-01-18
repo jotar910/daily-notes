@@ -4,8 +4,7 @@ import {useBlocker} from 'react-router-dom';
 import {RegisterOptions, SubmitHandler, useForm} from 'react-hook-form';
 import {useEffect, useState} from 'react';
 import {Note} from '@/libs/models/note.models.ts';
-import {appWindow} from "@tauri-apps/api/window";
-import {dialog} from "@tauri-apps/api";
+import {dialog, window as tauriWindow} from "@tauri-apps/api";
 
 export type Inputs = {
     title: string
@@ -39,6 +38,7 @@ function NotesForm({note, loading, routePrompt = true, onSubmit, onCancel}: Note
         <>
             <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
                 <input
+                    autoFocus={true}
                     defaultValue={note.title}
                     placeholder="Enter title"
                     className="text-lg font-semibold text-gray-900 dark:text-gray-100 w-full p-2"
@@ -103,9 +103,10 @@ function useFormPrompt(when: boolean) {
     }, [blocking, blocker]);
 
     useEffect(() => {
-        const listen = appWindow.listen("tauri://close-requested", async () => {
+        const currentWindow = tauriWindow.getCurrent();
+        const listen = currentWindow.listen("tauri://close-requested", async () => {
             if (!when || await dialog.confirm('Are you sure?')) {
-                await appWindow.close();
+                await currentWindow.close();
             }
         });
         return () => {

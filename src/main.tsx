@@ -12,6 +12,7 @@ import {Toaster} from '@/components/ui/toaster.tsx';
 import {NotesServiceContext, NotesServiceInstance} from "@/libs/services/notes.tsx";
 import {NotesStoreProvider} from "@/libs/stores/notes.tsx";
 import Settings from "@/routes/Settings.tsx";
+import CreateStandalone from "@/routes/CreateStandalone.tsx";
 
 const router = createBrowserRouter([
     {
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
                 element: <View/>
             }
         ]
+    },
+    {
+        path: '/creation',
+        element: <CreateStandalone/>
     },
     {
         path: '/settings',

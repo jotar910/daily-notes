@@ -18,6 +18,7 @@ mod models;
 mod schema;
 mod services;
 mod state;
+mod utils;
 
 fn main() {
     tauri::Builder::default()
@@ -89,30 +90,10 @@ fn load_store(app: &tauri::App) -> Result<Store<Wry>, Box<dyn std::error::Error>
 }
 
 fn customize_window(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
-    fn relative_size(size: u32, percentage: f32, min: u32) -> u32 {
-        let res = ((size as f32) * percentage) as u32;
-        let min = min.min(size);
-        res.max(min)
-    }
-
     let window = app.get_window("main").expect("main window must exist");
-    let monitor = window
-        .current_monitor()
-        .expect("monitor must exists on window context");
-
-    if let Some(monitor) = monitor {
-        let monitor_size = monitor.size();
-        let window_size = tauri::LogicalSize {
-            width: relative_size(monitor_size.width, 0.7, 800),
-            height: relative_size(monitor_size.height, 0.7, 600),
-        };
+    if let Some((window_size, window_pos)) = utils::window::placement(&window, 0.7, 800, 600) {
         window.set_size(window_size)?;
-        let window_pos = tauri::LogicalPosition {
-            x: (monitor_size.width - window_size.width) as f32 * 0.5,
-            y: (monitor_size.height - window_size.height) as f32 * 0.5,
-        };
         window.set_position(window_pos)?;
     }
-
     Ok(())
 }

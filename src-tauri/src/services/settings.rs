@@ -3,6 +3,8 @@ use std::sync::Mutex;
 use tauri::{AppHandle, GlobalShortcutManager, Wry};
 use tauri_plugin_store::Store;
 
+use crate::services;
+
 pub fn set_keymap(
     app_handle: AppHandle,
     store: &Mutex<Store<Wry>>,
@@ -29,7 +31,7 @@ pub fn register_keymap(app_handle: tauri::AppHandle, keymap: &str) -> tauri::Res
     app_handle
         .global_shortcut_manager()
         .register(keymap, move || {
-            spawn_window(app_handle.clone());
+            services::creation::spawn_window(app_handle.clone());
         })?;
     Ok(())
 }
