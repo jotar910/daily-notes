@@ -2,7 +2,7 @@ import {validationMessage} from '@/libs/utils/validation.utils.ts';
 import {Button} from '@/components/ui/button.tsx';
 import {useBlocker} from 'react-router-dom';
 import {RegisterOptions, SubmitHandler, useForm} from 'react-hook-form';
-import {useEffect, useState} from 'react';
+import {KeyboardEvent, useEffect, useState} from 'react';
 import {Note} from '@/libs/models/note.models.ts';
 import {dialog, window as tauriWindow} from "@tauri-apps/api";
 
@@ -26,6 +26,7 @@ function NotesForm({note, loading, routePrompt = true, onSubmit, onCancel}: Note
         formState: {errors, touchedFields, isValid},
     } = useForm<Inputs>();
 
+    const onSubmitWrapper = handleSubmit(onSubmit);
     const validations: Record<keyof Inputs, RegisterOptions> = {
         title: {required: true, minLength: 3, maxLength: 256},
         description: {required: true, maxLength: 4096}
@@ -34,9 +35,16 @@ function NotesForm({note, loading, routePrompt = true, onSubmit, onCancel}: Note
 
     useFormPrompt(isTouched && routePrompt);
 
+    const onKeyDown = (evt: KeyboardEvent<HTMLElement>) => {
+        if (evt.key === 'Enter' && (evt.altKey || evt.metaKey)) {
+            evt.preventDefault();
+            onSubmitWrapper(evt);
+        }
+    }
+
     return (
         <>
-            <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
+            <form onSubmit={onSubmitWrapper} className="mt-4">
                 <input
                     autoFocus={true}
                     defaultValue={note.title}
@@ -48,6 +56,7 @@ function NotesForm({note, loading, routePrompt = true, onSubmit, onCancel}: Note
                 <div className="flex justify-between items-center">
                     <div>
                         <Button
+                            tabIndex={-1}
                             disabled={!isValid || !isTouched || loading}
                             type="submit"
                             className="text-sm text-blue-500 dark:text-blue-400 mr-2 px-0"
@@ -56,6 +65,7 @@ function NotesForm({note, loading, routePrompt = true, onSubmit, onCancel}: Note
                             Save
                         </Button>
                         <Button
+                            tabIndex={-1}
                             disabled={loading}
                             type="button"
                             className="text-sm text-red-500 dark:text-red-400 px-0"
@@ -69,7 +79,9 @@ function NotesForm({note, loading, routePrompt = true, onSubmit, onCancel}: Note
                 <textarea
                     defaultValue={note.description}
                     placeholder="Enter description here..."
-                    className="text-gray-700 dark:text-gray-200 w-full p-2" rows={20}
+                    className="text-gray-700 dark:text-gray-200 w-full p-2"
+                    rows={20}
+                    onKeyDown={onKeyDown}
                     {...register('description', validations.description)}
                 ></textarea>
                 {errors.description &&

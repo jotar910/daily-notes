@@ -7,11 +7,12 @@ import {useContext, useEffect} from "react";
 import {NotesServiceContext} from "@/libs/services/notes.tsx";
 import {NotesStoreContext, NotesStoreDispatchContext} from "@/libs/stores/notes.tsx";
 import {ScrollArea} from "@/components/ui/scroll-area.tsx";
+import {listen} from "@tauri-apps/api/event";
 
 const baseUrl = '/';
 
 function Sidebar() {
-    const NotesService = useContext(NotesServiceContext);
+    const notesService = useContext(NotesServiceContext);
     const {notes} = useContext(NotesStoreContext);
     const dispatch = useContext(NotesStoreDispatchContext);
 
@@ -21,7 +22,19 @@ function Sidebar() {
     useEffect(() => {
         const fetch = async () => {
             dispatch({type: 'loading'});
-            dispatch({type: 'loaded', notes: await NotesService.listNotes()});
+            dispatch({type: 'loaded', notes: await notesService.listNotes()});
+        };
+        fetch();
+        const listener = listen('creation_submit', () => fetch());
+        return () => {
+            listener.then((unlisten) => unlisten());
+        };
+    }, []);
+
+    useEffect(() => {
+        const fetch = async () => {
+            dispatch({type: 'loading'});
+            dispatch({type: 'loaded', notes: await notesService.listNotes()});
         };
         fetch();
     }, []);

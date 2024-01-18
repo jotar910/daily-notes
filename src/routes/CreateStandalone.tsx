@@ -1,6 +1,7 @@
 import CreateNotes from "@/components/notes/CreateNotes.tsx";
 import {window as tauriWindow} from "@tauri-apps/api";
 import {useEffect} from "react";
+import {emit} from "@tauri-apps/api/event";
 
 function CreateStandalone() {
     const currentWindow = tauriWindow.getCurrent();
@@ -12,7 +13,15 @@ function CreateStandalone() {
     const close = () => currentWindow.emit("tauri://close-requested");
     return (
         <article className="flex-1 p-4 overflow-y-auto">
-            <CreateNotes onAfterSubmit={close} onAfterCancel={close}/>
+            <CreateNotes
+                onAfterSubmit={() => {
+                    emit('creation_submit');
+                    currentWindow.close();
+                }}
+                onAfterCancel={() => {
+                    emit('creation_cancel');
+                    close();
+                }}/>
         </article>
     );
 }
