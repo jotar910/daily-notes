@@ -11,10 +11,7 @@
   },
   "tauri": {
     "allowlist": {
-      "all": true,
-      "window": {
-        "setAlwaysOnTop": true
-      }
+      "all": true
     },
     "bundle": {
       "active": true,
@@ -27,6 +24,10 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ]
+    },
+    "systemTray": {
+      "iconPath": "icons/icon.ico",
+      "iconAsTemplate": true
     },
     "security": {
       "csp": null

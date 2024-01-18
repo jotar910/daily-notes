@@ -1,6 +1,6 @@
 use serde_json::json;
 use std::sync::Mutex;
-use tauri::{AppHandle, GlobalShortcutManager, Wry};
+use tauri::{AppHandle, GlobalShortcutManager, Wry, Manager};
 use tauri_plugin_store::Store;
 
 use crate::services;
@@ -37,6 +37,10 @@ pub fn register_keymap(app_handle: tauri::AppHandle, keymap: &str) -> tauri::Res
 }
 
 pub fn spawn_window(app_handle: tauri::AppHandle) {
+    if let Some(window) = app_handle.get_window("settings") {
+        window.set_focus().expect("settings window should focus");
+        return;
+    }
     std::thread::spawn(move || {
         tauri::WindowBuilder::new(
             &app_handle,

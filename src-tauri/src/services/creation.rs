@@ -1,8 +1,12 @@
-use tauri::{AppHandle, WindowUrl, WindowBuilder};
+use tauri::{AppHandle, WindowUrl, WindowBuilder, Manager};
 
 use crate::utils;
 
 pub fn spawn_window(app_handle: AppHandle) {
+    if let Some(window) = app_handle.get_window("creation") {
+        window.set_focus().expect("creation window should focus");
+        return;
+    }
     std::thread::spawn(move || {
         let window = WindowBuilder::new(
             &app_handle,
@@ -12,7 +16,7 @@ pub fn spawn_window(app_handle: AppHandle) {
         .center()
         .title("Create new note")
         .skip_taskbar(true)
-        .focused(true)
+        // .focused(true)
         .visible(false)
         .always_on_top(true)
         .build()

@@ -4,9 +4,6 @@ use crate::services;
 
 #[tauri::command]
 pub fn open_settings(app_handle: tauri::AppHandle) -> tauri::Result<()> {
-    if let Some(window) = app_handle.get_window("settings") {
-        return window.set_focus();
-    }
     services::settings::spawn_window(app_handle);
     Ok(())
 }
