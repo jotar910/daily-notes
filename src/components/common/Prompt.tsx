@@ -19,10 +19,10 @@ function Prompt({ open = true, title, message, onOk, onCancel }: PromptProps) {
                 </DialogHeader>
                 <DialogFooter>
                     <DialogClose asChild>
-                        <Button onClick={onOk} variant="ghost">Yes</Button>
+                        <Button onClick={onCancel} variant="destructive">No</Button>
                     </DialogClose>
                     <DialogClose asChild>
-                        <Button onClick={onCancel} variant="destructive">No</Button>
+                        <Button onClick={onOk} variant="ghost">Yes</Button>
                     </DialogClose>
                 </DialogFooter>
             </DialogContent>

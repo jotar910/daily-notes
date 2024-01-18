@@ -8,8 +8,6 @@ function Settings() {
     const [keymap, setKeymap] = useState('');
     const [error, setError] = useState<any>(null);
 
-    console.log(settings);
-
     useEffect(() => {
         const load = async () => {
             const store = new Store(settings);
