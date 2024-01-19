@@ -1,4 +1,4 @@
-import {Link, useNavigate} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {Note} from '@/libs/models/note.models.ts';
 import {Button} from '@/components/ui/button.tsx';
 import {computeDateLabel, groupNotesByDate, NotesGroup} from '@/libs/utils/notes.utils.ts';
@@ -89,24 +89,10 @@ interface SidebarItemProps {
 }
 
 function SidebarItem({note}: SidebarItemProps) {
-    const navigate = useNavigate();
-    const onEdit = () => navigate(baseUrl + note.id + '/edit');
-
     return (
         <Link className="block" to={baseUrl + note.id}>
             <div className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
-                <div className="flex justify-between items-center">
-                    <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{note.title}</h4>
-                    <div className="flex-shrink-0 ml-auto" onClick={(e) => e.preventDefault()}>
-                        <Button className="text-sm text-blue-500 dark:text-blue-400 mr-2 px-0" variant="link"
-                                onClick={onEdit}>
-                            Edit
-                        </Button>
-                        <Button className="text-sm text-red-500 dark:text-red-400 px-0" variant="link">
-                            Delete
-                        </Button>
-                    </div>
-                </div>
+                <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{note.title}</h4>
                 <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
                     {note.description}
                 </p>

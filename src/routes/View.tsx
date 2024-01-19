@@ -3,8 +3,9 @@ import {Link, useNavigate, useParams} from 'react-router-dom';
 import {Button} from '@/components/ui/button.tsx';
 import {useContext, useEffect, useState} from "react";
 import {NotesServiceContext} from "@/libs/services/notes.tsx";
-
-const baseUrl = '';
+import {useToast} from "@/components/ui/use-toast.ts";
+import {handleDeletion} from "@/libs/hooks/notes.hooks.ts";
+import {NotesStoreContext} from "@/libs/stores/notes.tsx";
 
 function View() {
     const NotesService = useContext(NotesServiceContext);
@@ -29,6 +30,7 @@ function View() {
         };
         fetch(+id);
     }, [id]);
+
     return (
         <article className="flex-1 p-4 overflow-y-auto">
             <ViewHeader/>
@@ -53,21 +55,41 @@ interface ViewDetailsProps {
 
 function ViewDetails({note}: ViewDetailsProps) {
     const navigate = useNavigate();
-    const onEdit = () => navigate(baseUrl + 'edit');
+    const {toast} = useToast();
+    const { deleting } = useContext(NotesStoreContext);
+
+    const onEdit = () => navigate('edit');
+    const onDelete = handleDeletion(() => {
+        return {
+            id: note.id,
+            afterSuccess: () => navigate('/'),
+            afterError: () => toast({
+                title: 'Oops, something went wrong!',
+                description: 'Could not delete the note, please try again later or contact service.'
+            })
+        };
+    });
 
     return (
         <div className="mt-4">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{note.title}</h2>
-            <div className="flex justify-between items-center">
-                <div>
-                    <Button className="text-sm text-blue-500 dark:text-blue-400 mr-2 px-0" variant="link"
-                            onClick={onEdit}>
-                        Edit
-                    </Button>
-                    <Button className="text-sm text-red-500 dark:text-red-400 px-0" variant="link">
-                        Delete
-                    </Button>
-                </div>
+            <div className="flex items-center">
+                <Button
+                    className="text-sm text-blue-500 dark:text-blue-400 mr-2 px-0"
+                    variant="link"
+                    disabled={deleting}
+                    onClick={onEdit}
+                >
+                    Edit
+                </Button>
+                <Button
+                    className="text-sm text-red-500 dark:text-red-400 px-0"
+                    variant="link"
+                    disabled={deleting}
+                    onClick={onDelete}
+                >
+                    Delete
+                </Button>
             </div>
             <div className="prose prose-gray mt-4 dark:prose-invert">
                 <p>{note.description}</p>

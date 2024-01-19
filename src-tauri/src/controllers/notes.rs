@@ -23,3 +23,8 @@ pub fn store_new_note(note: models::NewNoteDTO) -> Option<models::NoteDTO> {
 pub fn update_note(note: models::EditNoteDTO) -> Option<models::NoteDTO> {
     services::notes::update_note(&note.into()).map(models::NoteDTO::from)
 }
+
+#[tauri::command]
+pub fn delete_note(id: i32) -> Option<models::NoteDTO> {
+    services::notes::delete_note(id).map(models::NoteDTO::from)
+}

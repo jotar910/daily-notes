@@ -3,17 +3,18 @@ import {Store} from "tauri-plugin-store-api";
 import {invoke, window as tauriWindow} from "@tauri-apps/api";
 
 function Settings() {
-    const settings = import.meta.env.VITE_SETTINGS_PATH;
     const [keymap, setKeymap] = useState('');
     const [error, setError] = useState<any>(null);
 
     useEffect(() => {
         const load = async () => {
+            const settings: string = await invoke('settings_path');
             const store = new Store(settings);
+            await store.load();
             setKeymap(await store.get("keymap") || '');
         };
         load();
-    }, [settings]);
+    }, []);
 
     useEffect(() => {
         const currentWindow = tauriWindow.getCurrent();

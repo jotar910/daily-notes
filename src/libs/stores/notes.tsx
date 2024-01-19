@@ -6,6 +6,7 @@ export interface State {
     loaded: boolean;
     adding: boolean;
     editing: boolean;
+    deleting: boolean;
     notes: Note[];
 }
 
@@ -37,6 +38,17 @@ export type Action =
     } |
     {
         type: 'edit_failed';
+        err: any;
+    } |
+    {
+        type: 'deleting';
+    } |
+    {
+        type: 'deleted';
+        note: Note;
+    } |
+    {
+        type: 'delete_failed';
         err: any;
     };
 
@@ -84,6 +96,15 @@ function notesReducer(state: State, action: Action): State {
         case 'edit_failed': {
             return {...state, editing: false};
         }
+        case 'deleting': {
+            return {...state, deleting: true};
+        }
+        case 'deleted': {
+            return {...state, deleting: false, notes: state.notes.filter((note) => note.id !== action.note.id)};
+        }
+        case 'delete_failed': {
+            return {...state, deleting: false};
+        }
         default: {
             throw Error('Unknown action');
         }
@@ -95,6 +116,7 @@ const initialState: State = {
     loaded: false,
     adding: false,
     editing: false,
+    deleting: false,
     notes: []
 };
 

@@ -19,6 +19,10 @@ export class NotesService {
     editNote(note: EditNote): Promise<Note> {
         return invoke('update_note', { note });
     }
+
+    deleteNote(id: number): Promise<Note> {
+        return invoke('delete_note', { id });
+    }
 }
 
 export const NotesServiceInstance = new NotesService();

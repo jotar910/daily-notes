@@ -29,7 +29,7 @@ fn main() {
     let create_new = CustomMenuItem::new("create_new".to_string(), "Create New");
     let open_settings = CustomMenuItem::new("open_settings".to_string(), "Settings");
     let open = CustomMenuItem::new("open".to_string(), "Open Daily Notes");
-    let close = CustomMenuItem::new("close".to_string(), "Close Daily Notes");
+    let close = CustomMenuItem::new("close".to_string(), "Hide Daily Notes");
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
 
     let mut default_menu = Menu::os_default(&app_context.package_info().name);
@@ -64,9 +64,11 @@ fn main() {
             controllers::notes::get_note,
             controllers::notes::store_new_note,
             controllers::notes::update_note,
+            controllers::notes::delete_note,
             controllers::settings::open_settings,
             controllers::settings::close_settings,
             controllers::settings::set_keymap,
+            controllers::utils::settings_path,
         ])
         .on_window_event(|event| match event.event() {
             WindowEvent::CloseRequested { api, .. } => {
@@ -82,7 +84,7 @@ fn main() {
         .on_menu_event(|event| match event.menu_item_id() {
             "close" => {
                 let window = event.window();
-                if !window
+                if window
                     .is_visible()
                     .map_err(|err| eprintln!("main window is visible check failed: {err}"))
                     .unwrap_or(false)
@@ -137,24 +139,16 @@ fn main() {
 }
 
 fn setup(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
-    // Initialize the environment variables.
-    dotenvy::dotenv_override()?;
-
-    // Initialize the database.
     db::init();
 
-    // Customize window.
     customize_window(app)?;
 
-    // Load store.
     let store = load_store(app)?;
 
-    // Register keymap.
     if let Some(serde_json::Value::String(keymap)) = store.get("keymap") {
         services::settings::register_keymap(app.handle(), keymap)?;
     }
 
-    // Make tauri manage the app state.
     app.manage(AppState {
         store: Arc::new(Mutex::new(store)),
     });
@@ -163,7 +157,7 @@ fn setup(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn load_store(app: &tauri::App) -> Result<Store<Wry>, Box<dyn std::error::Error>> {
-    let path = dotenvy::var("VITE_SETTINGS_PATH")?;
+    let path = utils::paths::settings();
 
     if Path::new(&path).exists() {
         let mut store = StoreBuilder::new(app.handle(), path.parse()?).build();

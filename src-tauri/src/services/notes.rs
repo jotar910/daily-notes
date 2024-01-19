@@ -46,3 +46,14 @@ pub fn update_note(note: &models::EditNote) -> Option<models::Note> {
         .map_err(|err| eprintln!("Error updating note: {}", err))
         .ok()
 }
+
+pub fn delete_note(id: i32) -> Option<models::Note> {
+    let conn = &mut db::establish_db_connection();
+
+    diesel::delete(dsl::notes.filter(dsl::id.eq(id)))
+        .returning(models::Note::as_returning())
+        .get_result(conn)
+        .map_err(|err| eprintln!("Error deleting note: {}", err))
+        .ok()
+}
+

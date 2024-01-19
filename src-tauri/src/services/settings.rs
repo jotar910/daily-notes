@@ -1,6 +1,6 @@
 use serde_json::json;
 use std::sync::Mutex;
-use tauri::{AppHandle, GlobalShortcutManager, Wry, Manager};
+use tauri::{AppHandle, GlobalShortcutManager, Manager, Wry};
 use tauri_plugin_store::Store;
 
 use crate::services;
@@ -10,18 +10,35 @@ pub fn set_keymap(
     store: &Mutex<Store<Wry>>,
     keymap: &str,
 ) -> tauri::Result<()> {
+    let key = "keymap";
+    let prev_keymap: Option<String>;
+
     {
         let mut store = store.lock().expect("must lock store");
+
+        store.load().map_err(|err| {
+            eprintln!("failed to load store to memory: {err}");
+            return tauri::Error::UnknownApi(None);
+        })?;
+        prev_keymap = store.get(String::from(key)).and_then(|value| match value {
+            serde_json::Value::String(value) => Some(value.to_owned()),
+            _ => None,
+        });
+
         store
-            .insert(String::from("keymap"), json!(keymap.to_string()))
+            .insert(String::from(key), json!(keymap.to_string()))
             .map_err(|err| {
                 eprintln!("failed to insert keymap to store: {err}");
                 return tauri::Error::UnknownApi(None);
             })?;
+
         store.save().map_err(|err| {
-            eprintln!("failed to save store to memory: {err}");
+            eprintln!("failed to save store to disk: {err}");
             return tauri::Error::UnknownApi(None);
         })?;
+    }
+    if let Some(prev_keymap) = prev_keymap {
+        unregister_keymap(app_handle.clone(), &prev_keymap)?;
     }
     register_keymap(app_handle, keymap)?;
     Ok(())
@@ -33,6 +50,13 @@ pub fn register_keymap(app_handle: tauri::AppHandle, keymap: &str) -> tauri::Res
         .register(keymap, move || {
             services::creation::spawn_window(app_handle.clone());
         })?;
+    Ok(())
+}
+
+pub fn unregister_keymap(app_handle: tauri::AppHandle, keymap: &str) -> tauri::Result<()> {
+    app_handle
+        .global_shortcut_manager()
+        .unregister(keymap)?;
     Ok(())
 }
 

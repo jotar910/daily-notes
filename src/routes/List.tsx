@@ -5,6 +5,8 @@ import {useNavigate} from 'react-router-dom';
 import {useContext} from "react";
 import {NotesStoreContext} from "@/libs/stores/notes.tsx";
 import {invoke} from "@tauri-apps/api";
+import {handleDeletion} from "@/libs/hooks/notes.hooks.ts";
+import {useToast} from "@/components/ui/use-toast.ts";
 
 const baseUrl = '';
 
@@ -65,17 +67,39 @@ interface ListItemProps {
 
 function ListItem({ note }: ListItemProps) {
     const navigate = useNavigate();
+    const {toast} = useToast();
+    const { deleting } = useContext(NotesStoreContext);
+
     const onEdit = () => navigate(baseUrl + note.id + '/edit');
+    const onDelete = handleDeletion(() => {
+        return {
+            id: note.id,
+            afterError: () => toast({
+                title: 'Oops, something went wrong!',
+                description: 'Could not delete the note, please try again later or contact service.'
+            })
+        };
+    });
 
     return (
         <div className="flex flex-col gap-2 mb-4">
             <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{note.title}</h3>
                 <div>
-                    <Button className="text-sm text-blue-500 dark:text-blue-400 mr-2 px-0" variant="link" onClick={onEdit}>
+                    <Button
+                        className="text-sm text-blue-500 dark:text-blue-400 mr-2 px-0"
+                        variant="link"
+                        disabled={deleting}
+                        onClick={onEdit}
+                    >
                         Edit
                     </Button>
-                    <Button className="text-sm text-red-500 dark:text-red-400 px-0" variant="link">
+                    <Button
+                        className="text-sm text-red-500 dark:text-red-400 px-0"
+                        variant="link"
+                        disabled={deleting}
+                        onClick={onDelete}
+                    >
                         Delete
                     </Button>
                 </div>
