@@ -3,7 +3,7 @@ import {Note} from '@/libs/models/note.models.ts';
 import {Button} from '@/components/ui/button.tsx';
 import {computeDateLabel, groupNotesByDate, NotesGroup} from '@/libs/utils/notes.utils.ts';
 import SearchNotes from '@/components/notes/SearchNotes.tsx';
-import {useContext, useEffect} from "react";
+import {useContext, useEffect, useState} from "react";
 import {NotesServiceContext} from "@/libs/services/notes.tsx";
 import {NotesStoreContext, NotesStoreDispatchContext} from "@/libs/stores/notes.tsx";
 import {ScrollArea} from "@/components/ui/scroll-area.tsx";
@@ -16,7 +16,10 @@ function Sidebar() {
     const {notes} = useContext(NotesStoreContext);
     const dispatch = useContext(NotesStoreDispatchContext);
 
-    const notesByDate: NotesGroup = groupNotesByDate(notes);
+    const [visibleNotesIds, setVisibleNotesIds] = useState<number[] | null>(null);
+
+    const visibleNotes = visibleNotesIds ? notes.filter((note) => visibleNotesIds.includes(note.id)) : notes;
+    const notesByDate: NotesGroup = groupNotesByDate(visibleNotes);
     const sortedDates = Object.keys(notesByDate).map(Number).sort((a, b) => b - a);
 
     useEffect(() => {
@@ -49,7 +52,7 @@ function Sidebar() {
                     </Button>
                 </Link>
             </header>
-            <SearchNotes className="mx-4 my-2"/>
+            <SearchNotes className="mx-4 my-2" onChangeResults={setVisibleNotesIds}/>
             <ScrollArea className="px-4 max-h-full overflow-auto">
                 {
                     sortedDates.map((timestamp) => (

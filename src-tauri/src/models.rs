@@ -1,14 +1,20 @@
 use crate::schema::notes;
-use diesel::{Insertable, Queryable, Selectable};
-use serde::{Deserialize, Serialize};
+use diesel::sql_types::{BigInt, Integer, Text};
+use diesel::{prelude::QueryableByName, Insertable, Queryable, Selectable};
+use serde::{Serialize, Deserialize};
 
-#[derive(Debug, Queryable, Selectable)]
-#[diesel(table_name = notes)]
+#[derive(Debug, Queryable, Selectable, QueryableByName)]
+#[diesel(table_name = notes, sql_type = Nullable<Date>)]
 pub struct Note {
+    #[diesel(sql_type=Integer)]
     pub id: i32,
+    #[diesel(sql_type=Text)]
     pub title: String,
+    #[diesel(sql_type=Text)]
     pub description: String,
+    #[diesel(sql_type=BigInt)]
     pub created_timestamp: i64,
+    #[diesel(sql_type=BigInt)]
     pub modified_timestamp: i64,
 }
 

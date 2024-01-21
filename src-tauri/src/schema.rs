@@ -9,3 +9,13 @@ diesel::table! {
         modified_timestamp -> BigInt,
     }
 }
+
+diesel::table! {
+    notes_fts (rowid) {
+        rowid -> Integer,
+        #[sql_name = "notes_fts"]
+        whole_row -> Text,
+        rank -> Float,
+    }
+}
+

@@ -65,6 +65,7 @@ fn main() {
             controllers::notes::store_new_note,
             controllers::notes::update_note,
             controllers::notes::delete_note,
+            controllers::notes::search_notes,
             controllers::settings::open_settings,
             controllers::settings::close_settings,
             controllers::settings::set_keymap,

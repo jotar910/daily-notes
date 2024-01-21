@@ -28,3 +28,17 @@ pub fn update_note(note: models::EditNoteDTO) -> Option<models::NoteDTO> {
 pub fn delete_note(id: i32) -> Option<models::NoteDTO> {
     services::notes::delete_note(id).map(models::NoteDTO::from)
 }
+
+#[tauri::command]
+pub fn search_notes(search_term: String) -> Vec<models::NoteDTO> {
+    if search_term.len() < 2 {
+        return list_notes();
+    }
+    let mut term = "^".to_string();
+    term.push_str(&search_term);
+    term.push_str("*");
+    services::notes::search_notes(term)
+        .into_iter()
+        .map(models::NoteDTO::from)
+        .collect()
+}

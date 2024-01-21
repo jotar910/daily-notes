@@ -57,3 +57,12 @@ pub fn delete_note(id: i32) -> Option<models::Note> {
         .ok()
 }
 
+pub fn search_notes(search_term: String) -> Vec<models::Note> {
+    let conn = &mut db::establish_db_connection();
+
+    diesel::sql_query("SELECT notes.* FROM notes INNER JOIN notes_fts ON notes.id = notes_fts.note_id WHERE notes_fts MATCH ?")
+        .bind::<diesel::sql_types::Text, _>(&search_term)
+        .get_results::<models::Note>(conn)
+        .map_err(|err| eprintln!("Error searching for notes: {}", err))
+        .unwrap_or(vec![])
+}
