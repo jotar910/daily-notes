@@ -73,9 +73,18 @@ function SidebarGroup({timestamp, notes}: SidebarGroupProps) {
     const label = computeDateLabel(timestamp);
     const sortedNotes = [...notes].sort((a, b) => b.modifiedTimestamp - a.modifiedTimestamp);
 
+    const onClick = () => {
+        document.getElementById(`notes-${label}`)?.scrollIntoView({block: 'start', behavior: 'smooth'});
+    };
+
     return (
         <div className="mt-4 space-y-4">
-            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400">{label}</h3>
+            <h3
+                className="text-sm font-semibold text-gray-500 dark:text-gray-400 cursor-pointer hover:opacity-50"
+                onClick={onClick}
+            >
+                {label}
+            </h3>
             <div className="space-y-2">
                 {
                     sortedNotes.map((note) => (

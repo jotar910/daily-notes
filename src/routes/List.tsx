@@ -51,7 +51,7 @@ function ListGroup({ timestamp, notes }: ListGroupProps) {
 
     return (
         <div className="mt-4">
-            <h2 className="muted font-semibold text-gray-900 dark:text-gray-100 mb-2">{label}</h2>
+            <h2 id={"notes-"+label} className="muted font-semibold text-gray-900 dark:text-gray-100 mb-2">{label}</h2>
             {
                 sortedNotes.map((note) => (
                     <ListItem key={note.id} note={note}/>
