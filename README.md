@@ -17,12 +17,12 @@ git clone https://github.com/your-username/daily-notes.git
 cd daily-notes
 ```
 
-1. **Run the application**:
+2. **Run the application**:
 ```sh
 cargo tauri dev
 ```
 
-1. **Install the application**:
+3. **Install the application**:
 ```sh
 cargo tauri build
 ```
