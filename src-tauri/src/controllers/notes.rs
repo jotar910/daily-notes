@@ -34,10 +34,7 @@ pub fn search_notes(search_term: String) -> Vec<models::NoteDTO> {
     if search_term.len() < 2 {
         return list_notes();
     }
-    let mut term = "^".to_string();
-    term.push_str(&search_term);
-    term.push_str("*");
-    services::notes::search_notes(term)
+    services::notes::search_notes(search_term + "*")
         .into_iter()
         .map(models::NoteDTO::from)
         .collect()
